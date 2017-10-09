@@ -1,0 +1,154 @@
+# Translations template for PROJECT.
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-07-31 06:46+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: enmon/error.py:14 enmon/error.py:25
+msgid "Resource not existed."
+msgstr ""
+
+#: enmon/error.py:33
+msgid " is occupied"
+msgstr ""
+
+#: enmon/error.py:34
+msgid "data integrity conflict"
+msgstr ""
+
+#: enmon/controllers/admin.py:115
+msgid "records must later than archived"
+msgstr ""
+
+#: enmon/controllers/admin.py:127
+msgid "records can not be intersectional"
+msgstr ""
+
+#: enmon/controllers/admin.py:164
+msgid "archive old record first please!"
+msgstr ""
+
+#: enmon/controllers/main.py:20
+msgid "User not existed."
+msgstr ""
+
+#: enmon/controllers/main.py:24
+msgid "user was disabled, cannot login"
+msgstr ""
+
+#: enmon/controllers/main.py:31
+msgid "password error"
+msgstr ""
+
+#: enmon/models/base.py:115
+#, python-format
+msgid "%(source)s has relative %(ref)s, can not delete."
+msgstr ""
+
+#: enmon/models/base.py:123
+#, python-format
+msgid "%(source)s has relative %(ref)s, can not disable."
+msgstr ""
+
+#: enmon/models/base.py:133
+#, python-format
+msgid "%(source)s is disabled, can not enable."
+msgstr ""
+
+#: enmon/models/basic.py:7
+msgid "factory"
+msgstr ""
+
+#: enmon/models/basic.py:8
+msgid "name"
+msgstr ""
+
+#: enmon/models/basic.py:23
+msgid "line"
+msgstr ""
+
+#: enmon/models/basic.py:25
+msgid "uix_fid_name"
+msgstr ""
+
+#: enmon/models/basic.py:46
+msgid "tariff"
+msgstr ""
+
+#: enmon/models/basic.py:47
+msgid "uix_fid_medium"
+msgstr ""
+
+#: enmon/models/basic.py:82
+msgid "tariff_data"
+msgstr ""
+
+#: enmon/models/meter.py:10
+msgid "medium"
+msgstr ""
+
+#: enmon/models/meter.py:26
+msgid "meter_model"
+msgstr ""
+
+#: enmon/models/meter.py:39
+msgid "name must be shorter than"
+msgstr ""
+
+#: enmon/models/meter.py:73
+msgid "meter"
+msgstr ""
+
+#: enmon/models/meter.py:133
+msgid "flow_meter_data"
+msgstr ""
+
+#: enmon/models/meter.py:154
+msgid "kwh_meter_data"
+msgstr ""
+
+#: enmon/models/product.py:9
+msgid "product"
+msgstr ""
+
+#: enmon/models/product.py:20
+msgid "production_record"
+msgstr ""
+
+#: enmon/models/product.py:39
+msgid "Archived record cannot delete."
+msgstr ""
+
+#: enmon/models/product.py:44
+msgid "production_meter"
+msgstr ""
+
+#: enmon/models/product.py:68
+msgid "production_data"
+msgstr ""
+
+#: enmon/models/subscribe.py:9
+msgid "subscription"
+msgstr ""
+
+#: enmon/models/subscribe.py:20
+msgid "subscriber"
+msgstr ""
+
+#: enmon/models/user.py:10
+msgid "user"
+msgstr ""
+

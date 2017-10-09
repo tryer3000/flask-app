@@ -1,0 +1,22 @@
+Flask==0.12
+simplejson==3.10.0
+pymysql==0.7.11
+
+# Flask Extensions
+Flask-Babel==0.11.1
+Flask-Login==0.4.0
+Flask-Migrate==2.0.3
+Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
+
+# Other
+itsdangerous==0.24
+
+# Testing
+pytest==3.0.5
+pytest-cov==2.4.0
+mccabe==0.3
+flake8==2.4.0
+
+# deploy
+gunicorn==19.7.1
