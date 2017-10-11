@@ -8,10 +8,10 @@ from appname.models import Role
 @pytest.fixture(scope='module')
 def roles(testapp):
     rv = []
-    for x in range(10):
-        with testapp.test_client() as c:
-            rv = c.post('/roles/', json={"name": "role%s" % str(x)})
-            assert rv.status_code == 200
+    data = [{"name": "role%s" % str(x)}for x in range(10)]
+    with testapp.test_client() as c:
+        rv = c.post('/roles/', json=data)
+        assert rv.status_code == 200
     return rv
 
 
