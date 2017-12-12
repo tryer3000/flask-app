@@ -17,6 +17,7 @@ rename:
 	read -p "new application name:" newname; \
 	sed -i "s/$$oldname/$$newname/" manage.py; \
 	find $$oldname -name '*.py' -print | xargs sed -i "s/$$oldname/$$newname/"; \
+	find tests -name '*.py' -print | xargs sed -i "s/$$oldname/$$newname/"; \
 	mv $$oldname $$newname
 
 env:
