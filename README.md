@@ -14,11 +14,11 @@ make
 ```
 or
 ```
-python manage.py`
+python manage.py
 ```
 ## Create Database
 ```
-python manage.py createdb`
+python manage.py createdb
 ```
 
 ## Database Migration
