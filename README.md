@@ -16,8 +16,13 @@ or
 ```
 python manage.py`
 ```
+## Create Database
+```
+python manage.py createdb`
+```
 
 ## Database Migration
+
 ```bash
 $ # do it only if no `migrations` folder under your project folder
 $ python manage.py db init
