@@ -5,7 +5,7 @@ from flask import Flask
 from appname.error import mappings
 from appname.models import db
 from appname import hook
-from appname.controllers.user import bp as user_bp
+from appname.controllers.session import bp as session_bp
 from appname.controllers.default import bp as default_bp
 from appname.extensions import (
     babel,
@@ -36,7 +36,7 @@ def create_app(object_name):
     login_manager.init_app(app)
     # register our blueprints
     app.register_blueprint(default_bp)
-    app.register_blueprint(user_bp)
+    app.register_blueprint(session_bp)
 
     for e, hdl in mappings:
         app.register_error_handler(e, hdl)
