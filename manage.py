@@ -10,8 +10,7 @@ from appname.warmup import setup_db
 from appname.models import db, User
 # default to dev config because no one should use this in
 # production anyway
-env = os.environ.get('ENMON_ENV', 'dev')
-app = create_app('appname.settings.%sConfig' % env.capitalize())
+app = create_app('appname.settings.Config')
 manager = Manager(app)
 
 
