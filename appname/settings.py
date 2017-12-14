@@ -4,7 +4,7 @@ class Config(object):
     SESSION_COOKIE_NAME = 'appname'
     # DEBUG = True
     # WTF_CSRF_ENABLED = False
-    # SQLALCHEMY_TRACK_MODIFICATIONS = True  # disable warning when develop
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_ECHO = True  # comment out to log sql statement
     SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
     # SQLALCHEMY_DATABASE_URI = (
