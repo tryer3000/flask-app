@@ -1,8 +1,7 @@
 '''
-    auto rest api for relational database
+auto rest api for relational database
 '''
-import simplejson as json
-from flask import Blueprint, request, make_response, g
+from flask import Blueprint, request, make_response, g, jsonify
 from flask.views import MethodView
 from appname.models import db, get_model
 from appname.error import Error
@@ -19,7 +18,7 @@ class Resource(MethodView):
         else:
             model_cls = get_model(collection)
             obj = model_cls.query.filter_by(id=rid).one()
-            rv = json.dumps(obj)
+            rv = jsonify(obj)
         return rv
 
     def post(self, collection):
@@ -38,7 +37,7 @@ class Resource(MethodView):
         g.created_objs = objs
         db.session.add_all(objs)
         db.session.commit()
-        return len(objs) == 1 and json.dumps(objs[0]) or json.dumps(objs)
+        return len(objs) == 1 and jsonify(objs[0]) or jsonify(objs)
 
     def patch(self, collection, rid):
         model_cls = get_model(collection)
@@ -55,7 +54,7 @@ class Resource(MethodView):
 
         db.session.add(obj)
         db.session.commit()
-        return json.dumps(obj)
+        return jsonify(obj)
 
     def delete(self, collection, rid):
         model_cls = get_model(collection)
@@ -63,7 +62,7 @@ class Resource(MethodView):
         obj.remove_check()
         db.session.delete(obj)
         db.session.commit()
-        return json.dumps({})
+        return jsonify({})
 
     def list(self, collection):
         '''
@@ -85,7 +84,7 @@ class Resource(MethodView):
         st = (page - 1) * page_size
         ed = st + page_size
         rt = rt.slice(st, ed)
-        response = make_response(json.dumps([x for x in rt]))
+        response = make_response(jsonify([x for x in rt]))
         response.headers['Total'] = total
 
         return response

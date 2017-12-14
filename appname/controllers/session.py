@@ -1,5 +1,4 @@
-import simplejson as json
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 from flask_babel import gettext as _
 from flask_login import login_user, logout_user
@@ -25,14 +24,14 @@ class Session(MethodView):
 
         if user.check_password(data['password']):
             login_user(user)
-            return json.dumps(user)
+            return jsonify(user)
         else:
             err_msg = _('password error')
             raise Error(err_msg, 400)
 
     def delete(self, id):
         logout_user()
-        return json.dumps({'err': 0})
+        return jsonify({'err': 0})
 
 
 bp = Blueprint('user', __name__)
