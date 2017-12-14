@@ -3,9 +3,9 @@ from flask.views import MethodView
 from flask_babel import gettext as _
 from flask_login import login_user, logout_user
 
-from appname.api import register_api
 from appname.models import User
 from appname.error import Error
+from .base import register_api
 
 
 class Session(MethodView):

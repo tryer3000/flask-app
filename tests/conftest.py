@@ -27,7 +27,7 @@ class TestClient(FlaskClient):
 
 @pytest.fixture(scope='session')
 def testapp(request):
-    app = create_app('appname.settings.TestConfig')
+    app = create_app('appname.settings.Config')
     app.test_client_class = TestClient
     app.response_class = JSONResponse
     # client = app.test_client()

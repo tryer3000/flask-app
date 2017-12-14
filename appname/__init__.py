@@ -6,7 +6,7 @@ from appname.error import mappings
 from appname.models import db
 from appname import hook
 from appname.controllers.session import bp as session_bp
-from appname.controllers.default import bp as default_bp
+from appname.controllers.base import bp as default_bp
 from appname.extensions import (
     babel,
     login_manager,
