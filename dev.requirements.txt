@@ -1,0 +1,8 @@
+# Testing
+pytest==3.0.5
+pytest-cov==2.4.0
+mccabe==0.3
+flake8==2.4.0
+
+# deploy
+gunicorn==19.7.1
