@@ -46,6 +46,11 @@ class BaseModel(db.Model):
             setattr(self, k, v)
 
     @classmethod
+    def spec(cls):
+        return [(k, str(v.type))
+                for k, v in cls.__table__.columns.items()]
+
+    @classmethod
     def get_col_spec(cls, column_name):
         for c in cls.__table__.columns:
             if column_name.find('$') != -1:

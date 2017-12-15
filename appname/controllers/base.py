@@ -99,5 +99,11 @@ class Resource(MethodView):
         return response
 
 
+def get_spec(rcname):
+    model_cls = get_model(rcname)
+    return jsonify(model_cls.spec())
+
+
 bp = Blueprint('default', __name__)
+bp.add_url_rule('/spec/<rcname>', 'get_spec', get_spec)
 register_api(bp, Resource, 'default_api', '/<collection>/', pk='rid')
