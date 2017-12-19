@@ -51,7 +51,8 @@ def filters_2_sql(filters):
     return ' and '.join(_)
 
 
-_var_re = '^[a-zA-Z_]+([a-zA-Z0-9_]*)$'
+_var_re = '[a-zA-Z_][\w]*'
+_col_re = '^{}(\.{})?$'.format(_var_re, _var_re)
 _plain_type_re = '^\S*$'
 _str_re = '^"[^"]*"$'
 # _datetime_re = '^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$'
@@ -60,7 +61,7 @@ _str_re = '^"[^"]*"$'
 def filter_2_sql(col, op, val):
     op = _filter_op_2_sql_op_.get(op)
     # Do some validation of input
-    if re.match(_var_re, col) is None:
+    if re.match(_col_re, col) is None:
         raise Error('Invalid filter', 400)
 
     invalid_val = not (re.match(_plain_type_re, val) or
