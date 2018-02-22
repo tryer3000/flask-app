@@ -5,7 +5,7 @@ from flask import Blueprint, request, make_response, g, jsonify
 from flask.views import MethodView
 from appname.models import db, get_model
 from appname.error import Error
-from .fop import get_fop
+from appname.fop import get_fop
 
 MAX_CREATION = 10
 
