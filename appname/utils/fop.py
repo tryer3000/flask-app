@@ -5,8 +5,7 @@ import re
 
 from appname.error import Error
 from appname.utils.dsl import parser, lexer
-
-MAX_PAGE_SIZE = 99
+from appname.const import MAX_PAGE_SIZE
 
 
 def get_fop(req):

@@ -5,8 +5,8 @@ from flask import Flask
 from appname.error import mappings
 from appname.models import db
 from appname import hook
-from appname.controllers.session import bp as session_bp
-from appname.controllers.base import bp as default_bp
+from appname.controllers.user import bp as user_bp
+
 from appname.extensions import (
     babel,
     login_manager,
@@ -33,10 +33,11 @@ def create_app(object_name):
     babel.init_app(app)
     # initialize SQLAlchemy
     db.init_app(app)
+    print('using', app.config['SQLALCHEMY_DATABASE_URI'])
     login_manager.init_app(app)
     # register our blueprints
-    app.register_blueprint(default_bp)
-    app.register_blueprint(session_bp)
+    # app.register_blueprint(default_bp)
+    app.register_blueprint(user_bp)
 
     for e, hdl in mappings:
         app.register_error_handler(e, hdl)

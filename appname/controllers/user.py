@@ -1,11 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 from flask_babel import gettext as _
-from flask_login import login_user, logout_user
+from flask_login import current_user, login_user, logout_user
 
-from appname.models import User
+from appname.models import User, Role
 from appname.error import Error
-from .base import register_api
+from .base import register_api, Resource
 
 
 class Session(MethodView):
@@ -34,5 +34,14 @@ class Session(MethodView):
         return jsonify({'err': 0})
 
 
+class UserView(Resource):
+    model = User
+
+class RoleView(Resource):
+    model = Role
+
+
 bp = Blueprint('user', __name__)
-register_api(bp, Session, 'session_api', '/session/')
+register_api(bp, Session, 'session_api', '/sessions/')
+register_api(bp, UserView, 'user_api', '/users/')
+register_api(bp, RoleView, 'role_api', '/roles/')

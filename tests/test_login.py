@@ -7,16 +7,17 @@ from appname.models import db, User
 
 @pytest.fixture(scope='module')
 def user(testapp):
-    admin = User(username='titan', password='supersafepassword')
-    db.session.add(admin)
-    db.session.commit()
+    with testapp.app_context():
+        admin = User(username='titan', password='supersafepassword')
+        db.session.add(admin)
+        db.session.commit()
 
 
 @pytest.mark.usefixtures("testapp")
 class TestLogin:
     def test_login(self, testapp, user):
         with testapp.test_client() as c:
-            rv = c.post('/session/', json={
+            rv = c.post('/sessions/', json={
                 "username": "titan",
                 "password": "supersafepassword"
             })
@@ -25,7 +26,7 @@ class TestLogin:
 
     def test_login_fail(self, testapp, user):
         with testapp.test_client() as c:
-            rv = c.post('/session/', json={
+            rv = c.post('/sessions/', json={
                 "username": "titan",
                 "password": ""
             })

@@ -16,7 +16,7 @@ def roles(testapp):
 
 
 @pytest.mark.usefixtures("testapp")
-class TestDefault:
+class TestREST:
     def test_post(self, testapp):
         """ Test Saving the user model to the database """
         with testapp.test_client() as c:

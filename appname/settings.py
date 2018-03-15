@@ -6,7 +6,6 @@ class Config(object):
     # WTF_CSRF_ENABLED = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_ECHO = True  # comment out to log sql statement
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
-    # SQLALCHEMY_DATABASE_URI = (
-    #     'mysql+pymysql://usr:passwd@localhost:3306/appname'
-    #     '?charset=utf8mb4')
+    SQLALCHEMY_DATABASE_URI = (
+        'mysql+pymysql://root:my-secret-pw@localhost:3306/appname'
+        '?charset=utf8mb4')
