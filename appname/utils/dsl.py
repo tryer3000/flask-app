@@ -69,7 +69,6 @@ def exp_and_or(p):
 @pg.production('expression : NAME LE value')
 @pg.production('expression : NAME EQ value')
 @pg.production('expression : NAME NE value')
-@pg.production('expression : NAME IS NONE')
 def expression(p):
     op = p[1].getstr()
     if op == 'gt':
@@ -85,6 +84,13 @@ def expression(p):
     elif op == 'ne':
         op = '!='
     s = ' '.join([p[0].getstr(), op, p[2].getstr()])
+    return BoxString(s)
+
+
+@pg.production('expression : NAME IS NONE')
+@pg.production('expression : NAME IS NOT NONE')
+def exp_is(p):
+    s = ' '.join([x.getstr() for x in p])
     return BoxString(s)
 
 
