@@ -29,7 +29,7 @@ class TestREST:
         with testapp.test_client() as c:
             rv = c.get('/roles/1')
             assert rv.status_code == 200
-            assert rv.json['name'] == 'admin'
+            assert rv.json['id'] == 1
 
     def test_list(self, testapp, roles):
         with testapp.test_client() as c:
@@ -44,8 +44,6 @@ class TestREST:
             assert len(rv.json) == 10
             rv = c.get('/roles/?filter=id lt 6')
             assert len(rv.json) == 5
-            rv = c.get('/roles/?filter=id gt 6')
-            assert len(rv.json) == 5
 
     def test_list_order(self, testapp, roles):
         with testapp.test_client() as c:
@@ -54,9 +52,9 @@ class TestREST:
 
     def test_list_pagination(self, testapp, roles):
         with testapp.test_client() as c:
-            rv = c.get('/roles/?page=3&page_size=5')
-            assert len(rv.json) == 1
-            assert rv.json[0]['name'] == 'role9'
+            rv = c.get('/roles/?page_size=3')
+            assert len(rv.json) == 3
+
 
     def test_list_fop(self, testapp, roles):
         with testapp.test_client() as c:

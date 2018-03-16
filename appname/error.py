@@ -3,6 +3,10 @@ import sqlalchemy.exc as sqla_exc2
 import sqlalchemy.orm.exc as sqla_exc
 from flask_babel import gettext as _
 
+from appname.utils.perm import NotAuthorized
+
+ok_rt = {'err': 0}
+
 
 class Error(Exception):
     def __init__(self, msg, err_code):
@@ -35,9 +39,14 @@ def handle_sqla_integrity(e):
     return json.dumps({'err': _('data integrity conflict')}), 400
 
 
+def handle_not_authorized(e):
+    return json.dumps({'err': str(e)}), 401
+
+
 mappings = [
     (Error, handle_base_error),
     (HttpNotFound, handle_base_error),
+    (NotAuthorized, handle_not_authorized),
     (sqla_exc.NoResultFound, handle_sqla_noresult),
     (sqla_exc2.IntegrityError, handle_sqla_integrity)
 ]

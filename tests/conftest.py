@@ -5,6 +5,7 @@ from flask import Response
 from flask.testing import FlaskClient
 
 from appname import create_app
+from appname.warmup import setup_db
 from appname.models import db
 
 
@@ -33,6 +34,7 @@ def testapp(request):
     # client = app.test_client()
 
     db.app = app
+    setup_db(app, db)
     db.create_all()
 
     def teardown():
