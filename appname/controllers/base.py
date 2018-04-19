@@ -1,12 +1,12 @@
 '''
 auto rest api for relational database
 '''
-from flask import Blueprint, request, make_response, g, jsonify
+from flask import request, make_response, g, jsonify
 from flask.views import MethodView
 from appname.models import db
 from appname.models.base import BaseModel
 from appname.error import Error
-from appname.utils.fop import get_fop
+from appname.utils.fop import req_2_sql, result_2_objs
 from appname.const import MAX_CREATION
 
 
@@ -76,21 +76,24 @@ class Resource(MethodView):
             find many records. [check spec of microsoft api design guide](
             https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#97-filtering)
         '''
-        rt = self.model.query
-        filters, order_by, page, page_size = get_fop(request)
-        if filters:
-            x = self.model.get_filter_criteria(filters)
-            rt = rt.filter(*x)
-
-        total = rt.count()
-        if order_by:
-            for x in self.model.get_sorting_criteria(order_by):
-                rt = rt.order_by(x)
-
-        st = (page - 1) * page_size
-        ed = st + page_size
-        rt = rt.slice(st, ed)
-        response = make_response(jsonify([x for x in rt]))
-        response.headers['Total'] = total
-
-        return response
+        filters, sorting, pagination = req_2_sql(request)
+        print(filters, sorting, pagination)
+        q = ('select {selection} from {table} {filters} {sort} {pagination}')
+        cnt = db.session.execute(q.format(
+            table=self.model.__tablename__,
+            selection='count(*)',
+            filters=filters,
+            sort=sorting,
+            pagination=''
+        )).scalar()
+        rows = db.session.execute(q.format(
+            table=self.model.__tablename__,
+            selection='*',
+            filters=filters,
+            sort=sorting,
+            pagination=pagination
+        ))
+        rv = result_2_objs(rows, self.model)
+        resp = make_response(jsonify(rv))
+        resp.headers['Total'] = cnt
+        return resp

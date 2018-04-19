@@ -38,16 +38,16 @@ class TestREST:
 
     def test_list_filter(self, testapp, roles):
         with testapp.test_client() as c:
-            rv = c.get('/roles/?filter=name eq role1')
+            rv = c.get('/roles/?filter=name eq "role1"')
             assert len(rv.json) == 1
-            rv = c.get('/roles/?filter=name like role')
+            rv = c.get('/roles/?filter=name like "role"')
             assert len(rv.json) == 10
             rv = c.get('/roles/?filter=id lt 6')
             assert len(rv.json) == 5
 
     def test_list_order(self, testapp, roles):
         with testapp.test_client() as c:
-            rv = c.get('/roles/?orderBy=name desc')
+            rv = c.get('/roles/?orderBy=name desc, id asc')
             assert rv.json[0]['name'] == 'role9'
 
     def test_list_pagination(self, testapp, roles):
@@ -59,7 +59,7 @@ class TestREST:
     def test_list_fop(self, testapp, roles):
         with testapp.test_client() as c:
             rv = c.get('/roles/?'
-                       'filter=name like role&'
+                       'filter=name like "role"&'
                        'orderBy=name desc&'
                        'page=3&page_size=3')
             assert len(rv.json) == 3

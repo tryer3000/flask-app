@@ -2,7 +2,7 @@ from sqlalchemy.sql import and_
 from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 from flask_babel import gettext as _
-from flask_login import current_user, login_user, logout_user
+from flask_login import login_user, logout_user
 
 from appname.models import db, User, Role, user_role
 from appname.models.user import root
@@ -52,7 +52,7 @@ def list_perms():
 
 
 def list_user_roles(uid):
-    usr = User.query.filter(User.id==uid).one()
+    usr = User.query.filter(User.id == uid).one()
     return jsonify(usr.roles)
 
 
@@ -67,8 +67,8 @@ def attach_role(uid, rid):
 @perms_required('role-assignment')
 def detach_role(uid, rid):
     st = user_role.delete().where(and_(
-        user_role.c.user_id==uid,
-        user_role.c.role_id==rid
+        user_role.c.user_id == uid,
+        user_role.c.role_id == rid
     ))
     db.session.execute(st)
     db.session.commit()
@@ -76,7 +76,7 @@ def detach_role(uid, rid):
 
 
 def list_role_perms(rid):
-    role = Role.query(Role.id==rid).one()
+    role = Role.query(Role.id == rid).one()
     return jsonify([x.permission for x in role.terms])
 
 
