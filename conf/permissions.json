@@ -1,0 +1,4 @@
+[
+    {"id": 1, "name": "config-role", "desc": "配置角色的权限"},
+    {"id": 2, "name": "attach-role", "desc": "配置用户的角色"}
+]
