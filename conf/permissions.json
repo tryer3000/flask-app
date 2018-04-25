@@ -1,4 +1,6 @@
 [
     {"id": 1, "name": "config-role", "desc": "配置角色的权限"},
-    {"id": 2, "name": "attach-role", "desc": "配置用户的角色"}
+    {"id": 2, "name": "attach-role", "desc": "配置用户的角色"},
+    {"id": 3, "name": "config-user", "desc": "配置用户"},
+    {"id": 4, "name": "config-permission", "desc": "配置权限"}
 ]

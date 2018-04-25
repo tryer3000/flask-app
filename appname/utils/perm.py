@@ -11,16 +11,31 @@ _NotAuthExec = NotAuthorized(_('You are in the wrong place'))
 
 
 def _has_roles(usr, roles):
-    return bool(set(usr.roles) & set(roles))
+    '''return True if `usr` has any role in `roles`
+    '''
+    return usr.is_authenticated and any([
+        usr.has_role(x.strip()) for x in roles
+    ])
 
 
 def _has_perms(usr, perms):
-    if type(perms) == str:
-        perms = [perms]
-    return usr.is_authenticated and any([usr.has_permission(x) for x in perms])
+    '''return True if `usr` has any permission in `perms`'''
+    return usr.is_authenticated and any([
+        usr.has_permission(x.strip()) for x in perms
+    ])
 
 
 def roles_required(roles):
+    '''
+    raise `NotAuthorized` if current user has no any role in roles
+    roles: either a list like `['admin', 'basic-user']` or a
+           string like `admin, basic-user`
+    '''
+    try:
+        roles = roles.split(',')
+    except AttributeError as e:
+        pass
+
     def deco(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -32,6 +47,16 @@ def roles_required(roles):
 
 
 def perms_required(perms):
+    '''
+    raise `NotAuthorized` if current user has no any permission in `perms`
+    perms: either a list like `['edit-user', 'edit-role']` or a
+           string like `edit-user, edit-role`
+    '''
+    try:
+        perms = perms.split(',')
+    except AttributeError as e:
+        pass
+
     def deco(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -44,17 +69,13 @@ def perms_required(perms):
 
 def resource_need_roles(verb, roles):
     '''
-    verb_roles_list: an iterable of (verb, roles) pair
     verb: one of GET, POST, PATCH, DELETE and LIST
+    roles: either a list like `['admin', 'basic-user']` or a
+           string like `admin, basic-user`
     '''
     def deco(clsx):
-        _roles = roles
-        try:
-            _roles = roles.split(',')
-        except AttributeError as e:
-            pass
         func = getattr(clsx, verb.lower())
-        wrapped = roles_required(_roles)(func)
+        wrapped = roles_required(roles)(func)
         setattr(clsx, verb, wrapped)
         return clsx
     return deco
@@ -62,17 +83,13 @@ def resource_need_roles(verb, roles):
 
 def resource_need_perms(verb, perms):
     '''
-    verb_roles_list: an iterable of (verb, perms) pair
     verb: one of GET, POST, PATCH, DELETE and LIST
+    perms: either a list like `['edit-user', 'edit-role']` or a
+           string like `edit-user, edit-role`
     '''
     def deco(clsx):
-        _perms = perms
-        try:
-            _perms = perms.split(',')
-        except AttributeError as e:
-            pass
         func = getattr(clsx, verb.lower())
-        wrapped = perms_required(_perms)(func)
+        wrapped = perms_required(perms)(func)
         setattr(clsx, verb, wrapped)
         return clsx
     return deco

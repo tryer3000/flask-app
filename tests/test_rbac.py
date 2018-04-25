@@ -36,24 +36,24 @@ class TestRBAC:
 
     def test_list_user_role(self, testapp):
         # so that user has a role with `attach-role` permission
+        usr_id, role_id, perm_id = _l['user']['id'], _l['role']['id'], 2
         with testapp.app_context():
             q = 'insert into role_perm values({}, {})'
-            role_id, perm_id = _l['role']['id'], 2
             db.session.execute(q.format(role_id, perm_id))
             q = 'insert into user_role values({}, {})'
-            db.session.execute(q.format(_l['user']['id'], _l['role']['id']))
+            db.session.execute(q.format(usr_id, role_id))
             db.session.commit()
         with testapp.test_client() as c:
-            rv = c.get('/users/{}/roles/'.format(_l['user']['id']))
-            role = rv.json[0]
-            assert role['id'] == _l['role']['id']
+            rv = c.get('/users/{}/roles/'.format(usr_id))
+            assert rv.json[0]['id'] == role_id
 
     def test_detach_user_role(self, testapp):
         # this user should success to detach role
         with testapp.test_client() as c:
             rv = c.post('/sessions/', json=_l['user'])
-            role_id, user_id = _l['user']['id'], _l['role']['id']
-            rv = c.delete('/users/{}/roles/{}'.format(role_id, user_id))
+            user_id, role_id = _l['user']['id'], _l['role']['id']
+            rv = c.delete('/users/{}/roles/{}'.format(user_id, role_id))
+            print(rv.data)
             assert rv.status_code == 200
-            rv = c.get('/users/{}/roles/'.format(_l['user']['id']))
+            rv = c.get('/users/{}/roles/'.format(user_id))
             assert len(rv.json) == 0
