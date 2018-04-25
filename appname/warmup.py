@@ -17,7 +17,7 @@ def setup_db(app, sqla, database=None):
         print(db_name, 'database existed')
     else:
         conn.execute('commit')
-        conn.execute('create database %s' % db_name)
+        conn.execute('create database %s character set = utf8mb4' % db_name)
         conn.close()
         print(db_name, 'created')
     # create tables
