@@ -1,6 +1,7 @@
 '''
-    数据库建好后，写入必要的基础数据
+数据库建好后，写入必要的基础数据
 '''
+import simplejson as json
 
 
 def setup_db(app, sqla, database=None):
@@ -22,3 +23,15 @@ def setup_db(app, sqla, database=None):
     # create tables
     sqla.create_all()
     print('tables created')
+
+
+def update_perms(db):
+    with open('conf/permissions.json') as f:
+        pmss = json.load(f)
+        fmt = '({0[id]}, "{0[name]}", "{0[desc]}", 1)'
+        pmss = [fmt.format(x) for x in pmss]
+        db.session.execute('delete from `permission` where `id` < 0')
+        q = 'insert into `permission` (`id`, `name`, `desc`, `system`) values'
+        q += ', '.join(pmss)
+        db.session.execute(q)
+        db.session.commit()

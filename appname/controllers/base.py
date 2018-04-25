@@ -77,7 +77,6 @@ class Resource(MethodView):
             https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#97-filtering)
         '''
         filters, sorting, pagination = req_2_sql(request)
-        print(filters, sorting, pagination)
         q = ('select {selection} from {table} {filters} {sort} {pagination}')
         cnt = db.session.execute(q.format(
             table=self.model.__tablename__,

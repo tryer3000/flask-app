@@ -12,4 +12,4 @@ login_manager.login_message_category = "warning"
 
 @login_manager.user_loader
 def load_user(userid):
-    return root if userid=='0' else User.query.get(userid)
+    return root if userid == '0' else User.query.get(userid)

@@ -5,7 +5,7 @@ from flask import Response
 from flask.testing import FlaskClient
 
 from appname import create_app
-from appname.warmup import setup_db
+from appname.warmup import setup_db, update_perms
 from appname.models import db
 
 
@@ -36,6 +36,7 @@ def testapp(request):
     db.app = app
     setup_db(app, db)
     db.create_all()
+    update_perms(db)
 
     def teardown():
         with app.app_context():
@@ -45,3 +46,14 @@ def testapp(request):
     request.addfinalizer(teardown)
 
     return app
+
+
+@pytest.fixture(scope='session')
+def default_test_client(testapp):
+    c = testapp.test_client()
+    rv = c.post('/sessions/', json={
+        "username": "root",
+        "password": "Iwntellyou!!!"
+    })
+    assert rv.status_code == 200
+    return c

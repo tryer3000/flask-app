@@ -1,25 +1,6 @@
 from functools import wraps
-from flask import request
 from flask_login import current_user
 from flask_babel import gettext as _
-
-
-# define permissions
-class Permission(object):
-    def __init__(self, name, display=None, desc=None):
-        self.name = name  # unique, u must not change this once attached to a role.
-        self.display = display
-        self.desc = desc
-
-    def _asdict(self):
-        return self.__dict__
-
-# Permissions are identified by name which must not
-# be changed since it used by a role
-perms = frozenset([
-    Permission('edit-role', _('Edit Role')),
-    Permission('role-assignment', _('Role Assignment')),
-])
 
 
 class NotAuthorized(Exception):
@@ -29,21 +10,36 @@ class NotAuthorized(Exception):
 _NotAuthExec = NotAuthorized(_('You are in the wrong place'))
 
 
-def has_roles(usr, roles):
-    return bool(set(usr.roles) & set(roles))
+def _has_roles(usr, roles):
+    '''return True if `usr` has any role in `roles`
+    '''
+    return usr.is_authenticated and any([
+        usr.has_role(x.strip()) for x in roles
+    ])
 
 
-def has_perms(usr, perms):
-    if type(perms) == str:
-        perms = [perms]
-    return usr.is_authenticated and any([usr.has_permission(x) for x in perms])
+def _has_perms(usr, perms):
+    '''return True if `usr` has any permission in `perms`'''
+    return usr.is_authenticated and any([
+        usr.has_permission(x.strip()) for x in perms
+    ])
 
 
 def roles_required(roles):
+    '''
+    raise `NotAuthorized` if current user has no any role in roles
+    roles: either a list like `['admin', 'basic-user']` or a
+           string like `admin, basic-user`
+    '''
+    try:
+        roles = roles.split(',')
+    except AttributeError as e:
+        pass
+
     def deco(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            if not has_roles(current_user, roles):
+            if not _has_roles(current_user, roles):
                 raise _NotAuthExec
             return func(*args, **kwargs)
         return wrapper
@@ -51,41 +47,51 @@ def roles_required(roles):
 
 
 def perms_required(perms):
+    '''
+    raise `NotAuthorized` if current user has no any permission in `perms`
+    perms: either a list like `['edit-user', 'edit-role']` or a
+           string like `edit-user, edit-role`
+    '''
+    try:
+        perms = perms.split(',')
+    except AttributeError as e:
+        pass
+
     def deco(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            if not has_perms(current_user, perms):
+            if not _has_perms(current_user, perms):
                 raise _NotAuthExec
             return func(*args, **kwargs)
         return wrapper
     return deco
 
 
-def resource_need_roles(verb_roles_list):
+def resource_need_roles(verb, roles):
     '''
-    verb_roles_list: an iterable of (verb, roles) pair
     verb: one of GET, POST, PATCH, DELETE and LIST
+    roles: either a list like `['admin', 'basic-user']` or a
+           string like `admin, basic-user`
     '''
     def deco(clsx):
-        for x in verb_roles_list:
-            verb, roles = x
-            func = getattr(clsx, verb.lower())
-            wrapped = roles_required(roles)(func)
-            setattr(clsx, x, wrapped)
+        func = getattr(clsx, verb.lower())
+        wrapped = roles_required(roles)(func)
+        setattr(clsx, verb, wrapped)
+        return clsx
     return deco
 
 
-def resource_need_perms(verb_perms_list):
+def resource_need_perms(verb, perms):
     '''
-    verb_roles_list: an iterable of (verb, roles) pair
     verb: one of GET, POST, PATCH, DELETE and LIST
+    perms: either a list like `['edit-user', 'edit-role']` or a
+           string like `edit-user, edit-role`
     '''
     def deco(clsx):
-        for x in verb_perms_list:
-            verb, perms = x
-            func = getattr(clsx, verb.lower())
-            wrapped = roles_required(perms)(func)
-            setattr(clsx, x, wrapped)
+        func = getattr(clsx, verb.lower())
+        wrapped = perms_required(perms)(func)
+        setattr(clsx, verb, wrapped)
+        return clsx
     return deco
 
 
@@ -95,6 +101,7 @@ class RouteFilter(object):
     '''
     route2roles = {}
     route2perms = {}
+
     def __init__(self):
         raise Exception('no instance can be created')
 
@@ -110,6 +117,6 @@ class RouteFilter(object):
     def reg_hook(cls, app):
         app.before_request(cls._auth)
 
-    @classmethod    
+    @classmethod
     def _auth(cls):
         pass

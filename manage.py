@@ -6,7 +6,7 @@ from flask_script import Manager, Server, prompt_choices
 from flask_script.commands import ShowUrls, Clean
 from flask_migrate import Migrate, MigrateCommand
 from appname import create_app
-from appname.warmup import setup_db
+from appname.warmup import setup_db, update_perms
 from appname.models import db, User
 # default to dev config because no one should use this in
 # production anyway
@@ -24,7 +24,7 @@ def make_shell_context():
 
 
 @manager.command
-def createdb():
+def create_db():
     '''
         create database and tables
     '''
@@ -55,10 +55,15 @@ def babel():
         os.system('pybabel compile -d appname/translations')
 
 
+@manager.command
+def update_db():
+    update_perms(db)
+
+
 if __name__ == "__main__":
     migrate = Migrate(app, db)
     manager.add_command('db', MigrateCommand)
     manager.add_command("server", Server(host='0.0.0.0'))
-    manager.add_command("show-urls", ShowUrls())
+    manager.add_command("show_urls", ShowUrls())
     manager.add_command("clean", Clean())
     manager.run()
