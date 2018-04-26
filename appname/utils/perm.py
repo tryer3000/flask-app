@@ -73,8 +73,10 @@ def resource_need_roles(verb, roles):
     roles: either a list like `['admin', 'basic-user']` or a
            string like `admin, basic-user`
     '''
+    verb = verb.lower()
+
     def deco(clsx):
-        func = getattr(clsx, verb.lower())
+        func = getattr(clsx, verb)
         wrapped = roles_required(roles)(func)
         setattr(clsx, verb, wrapped)
         return clsx
@@ -87,8 +89,10 @@ def resource_need_perms(verb, perms):
     perms: either a list like `['edit-user', 'edit-role']` or a
            string like `edit-user, edit-role`
     '''
+    verb = verb.lower()
+
     def deco(clsx):
-        func = getattr(clsx, verb.lower())
+        func = getattr(clsx, verb)
         wrapped = perms_required(perms)(func)
         setattr(clsx, verb, wrapped)
         return clsx
