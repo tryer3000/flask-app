@@ -19,30 +19,26 @@ def user(testapp):
 @pytest.mark.usefixtures("testapp")
 class TestLogin:
     def test_login(self, testapp, user):
-        url_prefix = testapp.config['API_VERSION']
         with testapp.test_client() as c:
-            rv = c.post(url_prefix + '/login', json={
+            rv = c.post('/login', json={
                 "username": "titan",
                 "password": "supersafepassword"
             })
 
             assert rv.status_code == 200
 
+            rv = c.delete('/logout')
+        
+            assert rv.status_code == 200
+
+            
+
+            
     def test_login_fail(self, testapp, user):
-        url_prefix = testapp.config['API_VERSION']
         with testapp.test_client() as c:
-            rv = c.post(url_prefix + '/login', json={
+            rv = c.post('/login', json={
                 "username": "titan",
                 "password": ""
             })
 
             assert rv.status_code == 400
-
-
-    def test_logout(self, testapp, user):
-        url_prefix = testapp.config['API_VERSION']
-        with testapp.test_client() as c:
-            rv = c.delete(url_prefix + '/logout')
-           
-            assert rv.status_code == 200
-            assert rv.json['err'] == 0

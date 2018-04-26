@@ -51,7 +51,7 @@ def testapp(request):
 @pytest.fixture(scope='session')
 def default_test_client(testapp):
     c = testapp.test_client()
-    rv = c.post('/sessions/', json={
+    rv = c.post('/login/', json={
         "username": "root",
         "password": "Iwntellyou!!!"
     })

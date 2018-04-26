@@ -83,8 +83,10 @@ def add_role_perm(rid, pid):
 
 @perms_required(PMS_CONFIG_ROLE)
 def rm_role_perm(rid, pid):
-    st = role_perm.delete().where(
-        and_(role_perm.c.role_id == rid, role_perm.c.perm_id == pid))
+    st = role_perm.delete().where(and_(
+        role_perm.c.role_id == rid,
+        role_perm.c.perm_id == pid
+    ))
     db.session.execute(st)
     db.session.commit()
     return jsonify(ok_rt)
@@ -104,8 +106,10 @@ def attach_role(uid, rid):
 
 @perms_required(PMS_ATTACH_ROLE)
 def detach_role(uid, rid):
-    st = user_role.delete().where(
-        and_(user_role.c.user_id == uid, user_role.c.role_id == rid))
+    st = user_role.delete().where(and_(
+        user_role.c.user_id == uid, 
+        user_role.c.role_id == rid
+    ))
     db.session.execute(st)
     db.session.commit()
     return jsonify(ok_rt)
@@ -123,27 +127,15 @@ register_api(bp, PermissionView, 'permission_api', '/permissions/')
 
 bp.add_url_rule('/roles/<int:rid>/permissions/', 'list_role_perms',
                 list_role_perms)
-bp.add_url_rule(
-    '/roles/<int:rid>/permissions/<int:pid>',
-    'add_role_perm',
-    add_role_perm,
-    methods=['POST'])
-bp.add_url_rule(
-    '/roles/<int:uid>/permissions/<int:pid>',
-    'rm_role_perm',
-    rm_role_perm,
-    methods=['DELETE'])
+bp.add_url_rule('/roles/<int:rid>/permissions/<int:pid>', 'add_role_perm', 
+                add_role_perm, methods=['POST'])
+bp.add_url_rule('/roles/<int:uid>/permissions/<int:pid>', 'rm_role_perm', 
+                rm_role_perm, methods=['DELETE'])
 
 bp.add_url_rule('/users/<int:uid>/roles/', 'list_user_roles', list_user_roles)
-bp.add_url_rule(
-    '/users/<int:uid>/roles/<int:rid>',
-    'attach_role',
-    attach_role,
-    methods=['POST'])
-bp.add_url_rule(
-    '/users/<int:uid>/roles/<int:rid>',
-    'detach_role',
-    detach_role,
-    methods=['DELETE'])
+bp.add_url_rule('/users/<int:uid>/roles/<int:rid>', 'attach_role', 
+                attach_role, methods=['POST'])
+bp.add_url_rule('/users/<int:uid>/roles/<int:rid>', 'detach_role', 
+                detach_role, methods=['DELETE'])
 bp.add_url_rule('/login', 'user_login', user_login, methods=['POST'])
 bp.add_url_rule('/logout', 'user_logout', user_logout, methods=['DELETE'])
