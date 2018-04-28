@@ -37,7 +37,7 @@ def create_app(object_name):
     login_manager.init_app(app)
     # register our blueprints
     # app.register_blueprint(default_bp)
-    app.register_blueprint(user_bp)
+    app.register_blueprint(user_bp, url_prefix=app.config['API_VERSION'])
 
     for e, hdl in mappings:
         app.register_error_handler(e, hdl)

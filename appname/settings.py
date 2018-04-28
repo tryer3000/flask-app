@@ -6,6 +6,7 @@ class Config(object):
     # WTF_CSRF_ENABLED = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_ECHO = True  # comment out to log sql statement
+    API_VERSION = ''
     SQLALCHEMY_DATABASE_URI = (
         'mysql+pymysql://root:my-secret-pw@localhost:3306/appname'
         '?charset=utf8mb4')
