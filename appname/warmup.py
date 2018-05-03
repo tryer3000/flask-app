@@ -28,10 +28,11 @@ def setup_db(app, sqla, database=None):
 def update_perms(db):
     with open('conf/permissions.json') as f:
         pmss = json.load(f)
-        fmt = '({0[id]}, "{0[name]}", "{0[desc]}", 1)'
+        fmt = '({0[id]}, "{0[name]}", "{0[display]}", "{0[desc]}", 1)'
         pmss = [fmt.format(x) for x in pmss]
         db.session.execute('delete from `permission` where `id` < 0')
-        q = 'insert into `permission` (`id`, `name`, `desc`, `system`) values'
+        q = ('insert into `permission`'
+             ' (`id`, `name`, `display`, `desc`, `system`) values')
         q += ', '.join(pmss)
         db.session.execute(q)
         db.session.commit()

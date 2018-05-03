@@ -2,7 +2,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Sequence
 from flask_login import AnonymousUserMixin, UserMixin
-from .base import db, BaseModel
+from .base import db, BaseModel, I18NModel
 
 
 user_role = db.Table(
@@ -19,11 +19,12 @@ role_perm = db.Table(
 )
 
 
-class Permission(BaseModel):
+class Permission(I18NModel):
     id = db.Column(db.Integer(),
                    Sequence('permission_seq', start=1000, increment=1),
                    primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)
+    display = db.Column(db.String(64), unique=True, nullable=False)
     desc = db.Column(db.String(256))
     system = db.Column(db.Boolean)
     roles = relationship('Role', secondary=role_perm, back_populates='perms')

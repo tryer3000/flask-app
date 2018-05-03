@@ -40,3 +40,4 @@ env
 *.sublime-*
 .cache/
 .vscode
+.idea
