@@ -50,7 +50,7 @@ class TestRBAC:
     def test_detach_user_role(self, testapp):
         # this user should success to detach role
         with testapp.test_client() as c:
-            rv = c.post('/sessions/', json=_l['user'])
+            rv = c.post('/login', json=_l['user'])
             user_id, role_id = _l['user']['id'], _l['role']['id']
             rv = c.delete('/users/{}/roles/{}'.format(user_id, role_id))
             print(rv.data)
