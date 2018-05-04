@@ -1,18 +1,43 @@
 '''
 auto rest api for relational database
 '''
+from functools import wraps
+from collections import OrderedDict, Mapping
+
+from werkzeug.wrappers import Response as ResponseBase
 from flask import request, make_response, g, jsonify
 from flask.views import MethodView
+
 from appname.models import db
 from appname.models.base import BaseModel
 from appname.error import Error
+from appname.utils import get_locale
 from appname.utils.fop import req_2_sql, result_2_objs
 from appname.const import MAX_CREATION
 
 
+def unpack(value):
+    """Return a three tuple of data, code, and headers"""
+    if not isinstance(value, tuple):
+        return value, 200, {}
+
+    try:
+        data, code, headers = value
+        return data, code, headers
+    except ValueError:
+        pass
+
+    try:
+        data, code = value
+        return data, code, {}
+    except ValueError:
+        pass
+
+    return value, 200, {}
+
+
 def register_api(app, view, endpoint, url, pk='rid', pk_type='int'):
     view_func = view.as_view(endpoint)
-    # print(view_func.methods, dir(view_func))
     app.add_url_rule(url, defaults={pk: None},
                      view_func=view_func, methods=['GET'])
     app.add_url_rule(url, view_func=view_func, methods=['POST'])
@@ -22,13 +47,41 @@ def register_api(app, view, endpoint, url, pk='rid', pk_type='int'):
 
 class Resource(MethodView):
     model = BaseModel
+    representations = None
+    method_decorators = []
+
+    def dispatch_request(self, *args, **kwargs):
+        meth = getattr(self, request.method.lower(), None)
+        if meth is None and request.method == 'HEAD':
+            meth = getattr(self, 'get', None)
+        assert meth is not None, 'Unimplemented method %r' % request.method
+
+        if isinstance(self.method_decorators, Mapping):
+            decorators = self.method_decorators.get(request.method.lower(), [])
+        else:
+            decorators = self.method_decorators
+
+        for decorator in decorators:
+            meth = decorator(meth)
+
+        resp = meth(*args, **kwargs)
+
+        if isinstance(resp, ResponseBase):  # There may be a better way to test
+            return resp
+
+        data, code, headers = unpack(resp)
+        headers['Content-Type'] = "application/json"
+        resp = make_response(jsonify(data))
+        resp.status_code = code
+        resp.headers.extend(headers)
+        return resp
 
     def get(self, rid):
         if rid is None:
             rv = self.list()
         else:
             obj = self.model.query.filter_by(id=rid).one()
-            rv = jsonify(obj)
+            rv = obj._asdict()
         return rv
 
     def post(self):
@@ -46,7 +99,11 @@ class Resource(MethodView):
         g.created_objs = objs
         db.session.add_all(objs)
         db.session.commit()
-        return len(objs) == 1 and jsonify(objs[0]) or jsonify(objs)
+        if len(objs) == 1:
+            rv = objs[0]._asdict()
+        else:
+            rv = [x._asdict() for x in objs]
+        return rv
 
     def patch(self, rid):
         obj = self.model.query.filter_by(id=rid).one()
@@ -62,14 +119,16 @@ class Resource(MethodView):
 
         db.session.add(obj)
         db.session.commit()
-        return jsonify(obj)
+        return obj._asdict()
+        # return jsonify(obj)
 
     def delete(self, rid):
         obj = self.model.query.filter_by(id=rid).one()
         obj.remove_check()
         db.session.delete(obj)
         db.session.commit()
-        return jsonify({})
+        return {}
+        # return jsonify({})
 
     def list(self):
         '''
@@ -93,6 +152,49 @@ class Resource(MethodView):
             pagination=pagination
         ))
         rv = result_2_objs(rows, self.model)
-        resp = make_response(jsonify(rv))
-        resp.headers['Total'] = cnt
-        return resp
+        # resp = make_response(jsonify(rv))
+        # resp.headers['Total'] = cnt
+        return rv, 200, {'Total': cnt}
+
+
+def i18n_deco(func):
+    def i18n(data):
+        '''
+        {
+            "display": "sth in english",
+            "_i18n": {
+                "display_cn": "sth in chinese"
+            }
+        }
+        this function will translate the dict upward into
+        {
+            "display": "sth in chinese"
+        }
+        '''
+        rv = OrderedDict(data)
+        locale = get_locale()
+        postfix = '_{}'.format(locale)
+        len_postfix = len(postfix)
+        i18n_data = data.get('_i18n') or {}
+
+        for k, v in i18n_data.items():
+            if k.endswith(locale):
+                _k = k[:-len_postfix]
+                rv[_k] = v
+        rv.pop('_i18n', None)
+        return rv
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        resp = func(*args, **kwargs)
+        data, code, headers = unpack(resp)
+        if type(data) == list:
+            data = [i18n(x) for x in data]
+        else:
+            data = i18n(data)
+        return data, code, headers
+    return wrapper
+
+
+class I18NResource(Resource):
+    method_decorators = [i18n_deco]

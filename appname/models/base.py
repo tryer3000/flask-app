@@ -215,3 +215,23 @@ class BaseModel(db.Model):
         row.remove_check()
         db.session.delete(row)
         db.session.commit()
+
+
+class I18NModel(BaseModel):
+    __abstract__ = True
+    '''
+    a row may look like below
+    ```
+    {
+        "id": 1,
+        "name": "hay",
+        "display: "phrase in english"  # default in english
+        "_i18n": {
+            "display_zh": "zh": "中文词汇",  # translate to zh
+            "display_de": "de": "yyy"   # translate to de
+        }
+    }
+    so that we can translate dynamic data easily.
+    ```
+    '''
+    _i18n = db.Column(db.JSON)
