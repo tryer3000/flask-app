@@ -66,6 +66,12 @@ class PermissionView(I18NResource):
             raise Error('system permission is not editable', 401)
         return super().patch(rid)
 
+    def delete(self, rid):
+        perm = Permission.query.filter_by(id=rid).one()
+        if perm.system:
+            raise Error('ask your admin for support', 401)
+        return super().delete(rid)
+
 
 def list_user_roles(uid):
     usr = User.query.filter(User.id == uid).one()

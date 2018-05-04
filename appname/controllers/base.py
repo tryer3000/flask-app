@@ -181,7 +181,7 @@ def i18n_deco(func):
             if k.endswith(locale):
                 _k = k[:-len_postfix]
                 rv[_k] = v
-        del rv['_i18n']
+        rv.pop('_i18n', None)
         return rv
 
     @wraps(func)
